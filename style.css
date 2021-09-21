@@ -9,22 +9,6 @@
     animation-duration: 0.5s;
 }
 
-@keyframes onLoad {
-    0%{
-        opacity: 0;
-        transform: scale3d(.3, .3, .3);
-    }
-    25% {
-        opacity: 0.5;
-    }
-    50% {
-        opacity: 0.80;
-    }
-    100% {
-         opacity: 1;
-    }
-}
-
 #grid{
     display: grid;
     grid-template-rows: repeat(3, 1fr);
@@ -40,6 +24,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'Dosis', sans-serif;
+    font-size: 30px;
     border: solid;
     border-color: black;
+}
+
+
+@keyframes onLoad {
+    0%{
+        opacity: 0;
+        transform: scale3d(.3, .3, .3);
+    }
+    25% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.80;
+    }
+    100% {
+         opacity: 1;
+    }
 }

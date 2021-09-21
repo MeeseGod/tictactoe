@@ -54,17 +54,33 @@ const gameboard = (() => {
     const test = (a) => a;
 
     let positionStates = ["", "", "", "", "", "", "", "", ""];
-    
-    return {test, positionStates};
+
+    const checkPositions = () => {
+        const heldPositions = [];
+        for(let i = 0; i<=positionStates.length; i++){
+            positionStates[i] == gameplay.currentTurn ? heldPositions.push(i) : "";
+        }
+        console.log(gameplay.winConditions[1][1]);
+        console.log(heldPositions);
+    };
+
+  
+
+
+
+    return {test, positionStates, checkPositions};
 })();
 
 const gameplay = (() => {
     // Private variables & functions
-    const createPlayer = (name) => {
+    const createPlayer = (name, type, symbol, position) => {
         let player = {};
         player.name = name;
+        player.type = type;
+        player.symbol = symbol;
+        player.position = position;
         return (player);
-    }
+    };
 
     const winConditions = [
         [0, 1, 2],
@@ -77,31 +93,39 @@ const gameplay = (() => {
         [6, 7, 8]
     ];
 
-    let player1 = createPlayer("Me");
+    let player1 = createPlayer("Me", 'Player', "X", []);
+
+    let player2 = createPlayer("Me", 'AI', "O", []);
 
     let currentTurn = 'X';
 
     // function that changes state of currentTurn CORRECTLy
     const changeCurrentTurn = () => {
-        currentTurn === 'X' ? currentTurn = 'O' : currentTurn = 'X';
-    }
+        if(gameplay.currentTurn == 'X'){
+            gameplay.currentTurn = 'O'
+        }
+        else{gameplay.currentTurn = 'X'}
+        console.log(gameplay.currentTurn);
+        // gameplay.currentTurn === 'X' ? currentTurn = 'O' : currentTurn = 'X';
+    };
     
     // Public Variables & functions
 
     document.addEventListener("click", function(e){
         const getElement = e.target;
         getElement.id.includes('position') ? setPositionSymbol(getElement) : "";
-    })
+    });
 
     const setPositionSymbol = (x) => {
         if(x.textContent === ''){
-            x.textContent = currentTurn;
+            x.textContent = gameplay.currentTurn;
+            gameboard.positionStates[x.id.replace("position", "")] = gameplay.currentTurn;
             displayBoard.updateBoard();
             changeCurrentTurn();
-        }
-    }
+        };
+    };
 
-    return {winConditions, player1, currentTurn};
+    return {winConditions, player1, player2, currentTurn};
 })();
 
 const displayBoard = (() => {
@@ -110,8 +134,8 @@ const displayBoard = (() => {
     const updateBoard = () => {
         for(let i = 0; i <= getBoardPositions.length; i++){
             if(gameboard.positionStates[i]){getBoardPositions[i].textContent = gameboard.positionStates[i]};
-        }
-    }
+        };
+    };
     
     return{getBoardPositions, updateBoard};
 })();
