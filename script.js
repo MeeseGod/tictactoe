@@ -1,78 +1,32 @@
-// Tic Tac Toe
-
-
-// *** Things to keep in mind ***
-    // Try tucking everything away inside of a module or factory. 
-
-    // You’re going to store the gameboard as an array inside of a Gameboard object,
-        // you’re probably going to want an object to control the flow of the game itself.
-        // if you only ever need ONE of something (gameBoard, displayController), use a module. 
-
-    // Your players are also going to be stored in objects
-        // If you need multiples of something (players!), create them with factories.
-
-// *** Steps ***
-
-    //  write a JavaScript function that will render the contents of the gameboard array to the webpage (for now you can just manually fill in the array with "X"s and "O"s)
-
-    // Build the functions that allow players to add marks to a specific spot on the board, and then tie it to the DOM, letting players click on the gameboard to place their marker. 
-        // Don’t forget the logic that keeps players from playing in spots that are already taken!
-
-    // Build the logic that checks for when the game is over! Should check for 3-in-a-row and a tie.
-
-    // Clean up the interface to allow players to put in their names, include a button to start/restart the game and add a display element that congratulates the winning player!
-
-    // Optional - If you’re feeling ambitious create an AI so that a player can play against the computer!
-
-    // const Player = (name, level) => {
-    //     let health = level * 2;
-    //     const getLevel = () => level;
-    //     const getName  = () => name;
-    //     const die = () => {
-    //       // uh oh
-    //     };
-    //     const damage = x => {
-    //       health -= x;
-    //       if (health <= 0) {
-    //         die();
-    //       }
-    //     };
-    //     const attack = enemy => {
-    //       if (level < enemy.getLevel()) {
-    //         damage(1);
-    //         console.log(`${enemy.getName()} has damaged ${name}`);
-    //       }
-    //       if (level >= enemy.getLevel()) {
-    //         enemy.damage(1);
-    //         console.log(`${name} has damaged ${enemy.getName()}`);
-    //       }
-    //     };
-    //     return {attack, damage, getLevel, getName}
-    //   };
-
 const gameboard = (() => {
-    const test = (a) => a;
-
-    let positionStates = ["", "", "", "", "", "", "", "", ""];
-
     const checkPositions = () => {
-        const heldPositions = [];
-        for(let i = 0; i<=positionStates.length; i++){
-            positionStates[i] == gameplay.currentTurn ? heldPositions.push(i) : "";
-        }
-        console.log(gameplay.winConditions[1][1]);
-        console.log(heldPositions);
+        gameplay._roundCounter = gameplay._roundCounter + 1;
+        for(let i = 0; i < gameplay.winConditions.length; i++){
+            let winConditionMatches = 0;
+            for(let j = 0; j <= gameplay.winConditions[i].length - 1; j++){
+                if(gameplay._currentTurn.position.includes(gameplay.winConditions[i][j])){
+                    winConditionMatches = winConditionMatches + 1;
+                    if(winConditionMatches == 3){
+                        gameplay.declareWinner(gameplay._currentTurn);
+                        return true
+                    }
+                };
+            };
+        };
+        if(gameplay._roundCounter == 9){gameplay.declareTie()};
+        display.displayGameStatus();
     };
-
-  
-
-
-
-    return {test, positionStates, checkPositions};
+    return {checkPositions};
 })();
 
 const gameplay = (() => {
-    // Private variables & functions
+
+    let _roundCounter = 0;
+    let _player1 = null;
+    let _player2 = null;
+    let _currentTurn = null;
+    let _gameState = "Playing";
+
     const createPlayer = (name, type, symbol, position) => {
         let player = {};
         player.name = name;
@@ -83,69 +37,167 @@ const gameplay = (() => {
     };
 
     const winConditions = [
-        [0, 1, 2],
-        [0, 3, 6],
-        [0, 4, 8],
-        [1, 4, 7],
-        [2, 4, 6],
-        [2, 5, 8],
-        [3, 4, 5],
-        [6, 7, 8]
+        "012",
+        "036",
+        "048",
+        "147",
+        "246",
+        "258",
+        "345",
+        "678"
     ];
 
-    let player1 = createPlayer("Me", 'Player', "X", []);
+    const determineEnemySymbol = () => {
+        if(gameplay._player1){
+            if(gameplay._player1.symbol == 'X'){
+                return 'O';
+            };
+            return 'X';
+        };
+    };
 
-    let player2 = createPlayer("Me", 'AI', "O", []);
-
-    let currentTurn = 'X';
-
-    // function that changes state of currentTurn CORRECTLy
-    const changeCurrentTurn = () => {
-        if(gameplay.currentTurn == 'X'){
-            gameplay.currentTurn = 'O'
+    const determineStartingOrder = () => {
+        if(gameplay._player1.symbol == "X"){
+            gameplay._currentTurn = gameplay._player1;
         }
-        else{gameplay.currentTurn = 'X'}
-        console.log(gameplay.currentTurn);
-        // gameplay.currentTurn === 'X' ? currentTurn = 'O' : currentTurn = 'X';
+        else{
+            gameplay._currentTurn = gameplay._player2;
+        };
+    };
+
+    const changeTurn = () => {
+        if(gameplay._currentTurn == gameplay._player1){
+            gameplay._currentTurn = gameplay._player2;
+        }
+        else{
+            gameplay._currentTurn = gameplay._player1;
+        };
+
+        if(gameplay._currentTurn.type === 'AI' && gameplay._gameState == 'Playing'){
+            aiMove();
+        }
+        display.displayGameStatus();
+    };
+
+    const declareWinner = (winner) => {
+        gameplay._gameState = `${winner.name} wins`;
+    };
+
+    const declareTie = () => {
+        gameplay._gameState = `Tie`;
+    };
+
+    const startGame = () => {
+        gameplay._player1 = createPlayer(document.getElementById("playerName").value, 'Player', document.querySelector('input[name="playerSymbol"]:checked').value, "")
+        gameplay._player2 = createPlayer(document.getElementById("enemyName").value, document.querySelector('input[name="enemyChoice"]:checked').value, determineEnemySymbol(), "");
+        display.displayBoard();
+        gameplay._gameState = `Playing`;
+        determineStartingOrder();
+        display.resetBoardDisplay();
+        display.displayGameStatus();
+        if(gameplay._currentTurn.type == 'AI' &&gameplay._currentTurn.symbol == 'X'){aiMove()};
+    };
+
+    const setInitialValues = () => {
+        gameplay._player1 = null;
+        gameplay._player2 = null;
+        gameplay._currentTurn = null;
+        gameplay._gameState = "Playing";
+        gameplay._roundCounter = 0;
+    };
+
+    const resetGame = () => {
+        gameplay._player1.position = '';
+        gameplay._player2.position = '';
+        gameplay._roundCounter = 0;
+        gameplay._gameState = 'Playing';
+            if(gameplay._player1.symbol == 'X'){
+                gameplay._currentTurn = gameplay._player1;
+            }
+            else if(gameplay._player2.symbol == 'X'){
+                gameplay._currentTurn = gameplay._player2;
+            };
+            if(gameplay._currentTurn.type == 'AI'){aiMove()};
+            display.displayGameStatus();
+    };
+
+    const aiMove = () => {
+        let getPositions = document.querySelectorAll(".position");
+        let freePositions = []
+        for(let i = 0; i < getPositions.length; i++){
+            if(getPositions[i].textContent == ''){
+                freePositions.push(getPositions[i].id);
+            };
+        };
+        randomFreePosition = freePositions[Math.floor(Math.random() * freePositions.length)];
+        document.getElementById(randomFreePosition).textContent = gameplay._currentTurn.symbol;
+        gameplay._currentTurn.position = gameplay._currentTurn.position + randomFreePosition.replace("position", "");
+        gameboard.checkPositions();
+        gameplay.changeTurn();
     };
     
-    // Public Variables & functions
+    document.getElementById("startGame").addEventListener("click", startGame);
 
     document.addEventListener("click", function(e){
         const getElement = e.target;
-        getElement.id.includes('position') ? setPositionSymbol(getElement) : "";
+        getElement.id.includes('position') ? display.setPositionSymbol(getElement) : "";
     });
 
+     return {changeTurn, winConditions, declareWinner, declareTie, setInitialValues,  _roundCounter, startGame, resetGame, aiMove};
+})();
+
+const display = (() => {
     const setPositionSymbol = (x) => {
-        if(x.textContent === ''){
-            x.textContent = gameplay.currentTurn;
-            gameboard.positionStates[x.id.replace("position", "")] = gameplay.currentTurn;
-            displayBoard.updateBoard();
-            changeCurrentTurn();
+        if(x.textContent === '' && gameplay._gameState == "Playing"){
+            x.textContent = gameplay._currentTurn.symbol;
+            gameplay._currentTurn.position = gameplay._currentTurn.position + x.id.replace("position", "");
+            gameboard.checkPositions();
+            gameplay.changeTurn();
         };
     };
 
-    return {winConditions, player1, player2, currentTurn};
-})();
+    const displayBoard = () => {
+        document.getElementById("gridContainer").style.display = "flex";
+        document.getElementById("gameUpdates").style.display = "flex";
+        document.getElementById("boardControls").style.display = "flex";
+        document.getElementById("startingMenu").style.display = "none";
+    };
 
-const displayBoard = (() => {
-    const getBoardPositions = document.querySelectorAll(".position");
-    
-    const updateBoard = () => {
-        for(let i = 0; i <= getBoardPositions.length; i++){
-            if(gameboard.positionStates[i]){getBoardPositions[i].textContent = gameboard.positionStates[i]};
+    const displayMainMenu = () => {
+        document.getElementById("gridContainer").style.display = "none";
+        document.getElementById("gameUpdates").style.display = "none";
+        document.getElementById("boardControls").style.display = "none";
+        document.getElementById("startingMenu").style.display = "flex";
+        gameplay.setInitialValues();
+    };
+
+    const resetBoardDisplay = () => {
+        let targetBoardPositions = document.getElementsByClassName("position");
+        for(let i = 0; i < targetBoardPositions.length; i ++){
+            targetBoardPositions[i].textContent = "";
+        };
+        gameplay.resetGame();
+    };
+
+    const displayGameStatus = () =>{
+        let targetGameUpdates = document.getElementById("gameUpdates");
+        if(gameplay._gameState == 'Playing'){
+            targetGameUpdates.textContent = `${gameplay._currentTurn.name}'s Turn`;
+        }
+        else if(gameplay._gameState == 'Player 1 wins'){
+            targetGameUpdates.textContent = `${gameplay._player1.name} Wins!`;
+        }
+        else if(gameplay._gameState == 'Player 2 wins'){
+            targetGameUpdates.textContent = `${gameplay._player2.name} Wins!`;
+        }
+        else{
+            targetGameUpdates.textContent = "Tie!";
         };
     };
     
-    return{getBoardPositions, updateBoard};
+    document.getElementById("resetBoard").addEventListener("click", resetBoardDisplay);
+
+    document.getElementById("newGame").addEventListener("click", displayMainMenu);
+
+    return{setPositionSymbol, displayBoard, displayMainMenu, resetBoardDisplay, displayGameStatus};
 })();
-
-
-console.log(gameboard.test("f"));
-console.log(gameboard.positionStates[1]);
-console.log (`Length: ${gameboard.positionStates.length}`);
-console.log(typeof(gameboard));
-console.log(gameplay.winConditions);
-console.log(gameplay.player1);
-console.log(displayBoard.getBoardPositions);
-displayBoard.updateBoard();

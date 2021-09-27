@@ -7,26 +7,59 @@
 <link rel="icon" href="images/odin32x32.png">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap');
 </style>
 <body>
-    <div id="gameSetUp">
-    </div>
-    
-    <div id= "gridContainer">
-        <div id="grid">
-            <div id="position0" class = "position"></div>
-            <div id="position1" class = "position"></div>
-            <div id="position2" class = "position"></div>
-            <div id="position3" class = "position"></div>
-            <div id="position4" class = "position"></div>
-            <div id="position5" class = "position"></div>
-            <div id="position6" class = "position"></div>
-            <div id="position7" class = "position"></div>
-            <div id="position8" class = "position"></div>
-
+    <div id = "boardContainer">
+        <h1 id = "gameUpdates"></h1>
+        <div id= "gridContainer">
+            <div id="grid">
+                <div id="position0" class = "position"></div>
+                <div id="position1" class = "position"></div>
+                <div id="position2" class = "position"></div>
+                <div id="position3" class = "position"></div>
+                <div id="position4" class = "position"></div>
+                <div id="position5" class = "position"></div>
+                <div id="position6" class = "position"></div>
+                <div id="position7" class = "position"></div>
+                <div id="position8" class = "position"></div>
+            </div>
+        </div>
+        <div id = "boardControls">
+            <button id="resetBoard" class="boardButtons">Reset</button>
+            <button id="newGame" class="boardButtons">New Game</button>
         </div>
     </div>
 
+    <div id = "startingMenu">
+        <div id = "title">
+            <h1>Tic Tac Toe</h1>
+        </div>
+        <div id = "setPlayerInfo">
+            <form id = "playerForm">
+                <label for="playerName">Player 1 Name:</label>
+                <input type="text" name = "playerName" id="playerName" value="Player 1">
+                <input type="radio" name = "playerSymbol" id="playerX" value="X" checked>
+                <label for="playerX">X</label>
+                <input type="radio" name = "playerSymbol" id="playerO" value="O">
+                <label for="playerO">O</label>
+            </form>
+        </div>
+
+        <div id = "setEnemyInfo">
+            <form id = "enemyForm">
+                <label for="enemyName">Player 2 Name:</label>
+                <input type="text" name = "enemyName" id="enemyName" value="Player 2">
+                <input type="radio" name = "enemyChoice" id="enemyPlayer" value="Player" checked>
+                <label for="enemyPlayer">Player</label>
+                <input type="radio" name = "enemyChoice" id="enemyAI" value="AI">
+                <label for="enemyAI">AI</label>
+            </form>
+        </div>
+
+        <button id = "startGame">Start</button>
+    </div>
 
 </body>
 </html>

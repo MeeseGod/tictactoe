@@ -1,23 +1,91 @@
 /* Tic Tac Toe CSS File */
-#gridContainer{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+body{
+    background-color: black;
+}
+
+h1{
+    font-family: 'Press Start 2P', cursive;
+    font-size: 30px;
+    color: white;
+}
+
+button{
+    font-family: 'Dosis', sans-serif;
+}
+
+label{
+    color: white;
+    font-family: 'Dosis', sans-serif;
+}
+
+label[for=playerX]{
+    margin-right: 37px;
+}
+
+label[for=enemyPlayer]{
+    margin-right: 5px;
+}
+
+label[for=playerName]{
+    margin-right: 2px;
+}
+
+input[type=text]{
+    font-family: 'Open Sans', sans-serif;
+    border-radius: 20px;
+    border-style: none;
+    height: 23px;
+}
+
+#gameUpdates{
+    display: none;
+    position: absolute;
+    overflow-wrap: break-word;
+    z-index: 2;
+    width:450px;
+    margin-left:-220px;
+    left:50%;
+    top: 70px;
     animation: onLoad;
     animation-duration: 0.5s;
+}
+
+#startGame{
+    border-radius: 20px;
+    border: none;
+    height: 25px;
+    width: 125px;
+    background-color: white;
+}
+
+#startGame:hover{
+    background-color: grey;
+}
+
+#playerX{
+    margin-left: 9px;
+}
+
+#gridContainer{
+    justify-content: center;
+    align-items: center;
+    animation: onLoad;
+    animation-duration: 0.5s;
+    display: none;
+    margin-top: 175px;
 }
 
 #grid{
     display: grid;
     grid-template-rows: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
     height: 450px;
     width: 450px;
     background-color: white;
     border: solid;
     border-color: black;
+    top: 50px;
 }
 
 .position{
@@ -30,6 +98,56 @@
     border-color: black;
 }
 
+.position:hover{
+    background-color: lightgray;
+}
+
+#startingMenu{
+    margin-top: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: onLoad;
+    animation-duration: 0.5s;
+}
+
+#boardControls{
+    display: none;
+    justify-content: center;
+    margin-top: 25px;
+    animation: onLoad;
+    animation-duration: 0.5s;
+}
+
+#setPlayerInfo{
+    width: 430px;
+}
+
+#setEnemyInfo{
+    width: 430px;
+}
+
+#resetBoard{
+    margin-right: 5px;
+}
+
+#newGame{
+    margin-left: 5px;
+}
+
+.boardButtons{
+    border-radius: 20px;
+    border: none;
+    height: 30px;
+    width: 100px;
+}
+.boardButtons:hover{
+    background-color: grey;
+}
+
+#setEnemyInfo, #setPlayerInfo{
+    margin-bottom: 20px;
+}
 
 @keyframes onLoad {
     0%{
